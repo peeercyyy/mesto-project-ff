@@ -1,30 +1,30 @@
 import '../pages/index.css';
+import { loadImages } from './imagesLoader';
+import { createCard, deleteCard } from './card';
+import { initialCards } from './cards';
+import { closeModal, handleOverLayClose, openModal } from './modal';
 
-// @todo: Темплейт карточки
-const cardTemplate = document.querySelector('#card-template');
 // @todo: DOM узлы
 const placesList = document.querySelector('.places__list');
-// @todo: Функция создания карточки
-const createCard = (cardData, deleteCallback) => {
-  const card = cardTemplate.content.cloneNode(true);
-  const cardImage = card.querySelector('.card__image');
-  const cardTitle = card.querySelector('.card__title');
-  const cardDeleteBtn = card.querySelector('.card__delete-button');
-  const titleContent = document.createTextNode(cardData.name);
-  cardImage.setAttribute('src', cardData.link);
-  cardImage.setAttribute('alt', `изображение ${cardData.name}`);
-  cardTitle.append(titleContent);
-  cardDeleteBtn.addEventListener('click', deleteCallback);
+const editProfileButton = document.querySelector('.profile__edit-button');
+const editPopup = document.querySelector('.popup_type_edit');
+const addNewCardButton = document.querySelector('profile__add-button');
 
-  return card;
-};
-// @todo: Функция удаления карточки
-const deleteCard = (event) => {
-  const deleteBtn = event.target;
-  const deleteBtnCardParent = deleteBtn.closest('.card');
-  deleteBtnCardParent.remove();
-};
+loadImages();
+
 // @todo: Вывести карточки на страницу
 initialCards.forEach((card) => {
   placesList.append(createCard(card, deleteCard));
+});
+
+editProfileButton.addEventListener('click', (evt) => {
+  openModal(editPopup);
+});
+
+editPopup.addEventListener('click', handleOverLayClose);
+
+document.addEventListener('click', (evt) => {
+  if (evt.target.classList.contains('popup__close')) {
+    closeModal(evt.target.parentNode.parentNode);
+  }
 });

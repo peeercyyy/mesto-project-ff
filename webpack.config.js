@@ -12,10 +12,10 @@ module.exports = {
   },
   mode: 'development',
   devServer: {
-    static: path.resolve(__dirname, './dist'),
+    static: path.resolve(__dirname, 'dist'),
+    open: true,
     compress: true,
     port: 3000,
-    open: true,
   },
   module: {
     rules: [
