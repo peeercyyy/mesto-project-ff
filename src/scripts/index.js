@@ -1,6 +1,6 @@
 import '../pages/index.css';
 import { loadImages } from './imagesLoader';
-import { createCard, deleteCard } from './card';
+import { createCard, deleteCard, likeCard } from './card';
 import { initialCards } from './cards';
 import { closeModal, handleOverLayClose, openModal } from './modal';
 
@@ -38,7 +38,7 @@ const handleCardFormSubmit = (evt) => {
   evt.preventDefault();
   const name = newPlaceName.value;
   const link = newPlaceLink.value;
-  const newCard = createCard({ name, link }, deleteCard);
+  const newCard = createCard({ name, link }, deleteCard, likeCard);
   placesList.prepend(newCard);
   newPlaceForm.reset();
   closeModal(addNewCardPopup);
@@ -48,7 +48,7 @@ loadImages();
 
 // @todo: Вывести карточки на страницу
 initialCards.forEach((card) => {
-  placesList.append(createCard(card, deleteCard));
+  placesList.append(createCard(card, deleteCard, likeCard));
 });
 
 document.addEventListener('click', (evt) => {
