@@ -10,6 +10,7 @@ const editProfileButton = document.querySelector('.profile__edit-button');
 const editPopup = document.querySelector('.popup_type_edit');
 const addNewCardButton = document.querySelector('.profile__add-button');
 const addNewCardPopup = document.querySelector('.popup_type_new-card');
+const popups = document.querySelectorAll('.popup');
 
 const avatarFormElement = document.forms['edit-profile'];
 const nameInput = avatarFormElement.name;
@@ -45,6 +46,10 @@ const handleCardFormSubmit = (evt) => {
 };
 
 loadImages();
+
+popups.forEach((popup) => {
+  popup.classList.add('popup_is-animated');
+});
 
 // @todo: Вывести карточки на страницу
 initialCards.forEach((card) => {
