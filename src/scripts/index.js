@@ -2,7 +2,7 @@ import '../pages/index.css';
 import { loadImages } from './imagesLoader';
 import { createCard, deleteCard, likeCard, openImage } from './card';
 import { initialCards } from './cards';
-import { closeModal, handleOverLayClose, openModal } from './modal';
+import { closeModal, openModal } from './modal';
 
 // @todo: DOM узлы
 const placesList = document.querySelector('.places__list');
@@ -12,9 +12,9 @@ const addNewCardButton = document.querySelector('.profile__add-button');
 const addNewCardPopup = document.querySelector('.popup_type_new-card');
 const popups = document.querySelectorAll('.popup');
 
-const avatarFormElement = document.forms['edit-profile'];
-const nameInput = avatarFormElement.name;
-const jobInput = avatarFormElement.description;
+const profileForm = document.forms['edit-profile'];
+const nameInput = profileForm.name;
+const jobInput = profileForm.description;
 const profileName = document.querySelector('.profile__title');
 const profileDescription = document.querySelector('.profile__description');
 
@@ -22,16 +22,16 @@ const newPlaceForm = document.forms['new-place'];
 const newPlaceName = newPlaceForm['place-name'];
 const newPlaceLink = newPlaceForm.link;
 
-const handleFillAvatarFormInputs = () => {
+const handleFillProfileFormInputs = () => {
   nameInput.value = profileName.textContent;
   jobInput.value = profileDescription.textContent;
 };
 
-const handleAvatarFormSubmit = (evt) => {
+const handleProfileFormSubmit = (evt) => {
   evt.preventDefault();
   profileName.textContent = nameInput.value;
   profileDescription.textContent = jobInput.value;
-  avatarFormElement.reset();
+  profileForm.reset();
   closeModal(editPopup);
 };
 
@@ -49,6 +49,14 @@ loadImages();
 
 popups.forEach((popup) => {
   popup.classList.add('popup_is-animated');
+  popup.addEventListener('mousedown', (evt) => {
+    if (
+      evt.target.classList.contains('popup_is-opened') ||
+      evt.target.classList.contains('popup__close')
+    ) {
+      closeModal(popup);
+    }
+  });
 });
 
 // @todo: Вывести карточки на страницу
@@ -56,25 +64,15 @@ initialCards.forEach((card) => {
   placesList.append(createCard(card, deleteCard, likeCard, openImage));
 });
 
-document.addEventListener('click', (evt) => {
-  if (evt.target.classList.contains('popup__close')) {
-    closeModal(evt.target.parentNode.parentNode);
-  }
-});
-
 editProfileButton.addEventListener('click', () => {
   openModal(editPopup);
-  handleFillAvatarFormInputs();
+  handleFillProfileFormInputs();
 });
-
-editPopup.addEventListener('click', handleOverLayClose);
 
 addNewCardButton.addEventListener('click', () => {
   openModal(addNewCardPopup);
 });
 
-addNewCardPopup.addEventListener('click', handleOverLayClose);
-
-avatarFormElement.addEventListener('submit', handleAvatarFormSubmit);
+profileForm.addEventListener('submit', handleProfileFormSubmit);
 
 newPlaceForm.addEventListener('submit', handleCardFormSubmit);

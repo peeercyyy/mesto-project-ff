@@ -1,5 +1,9 @@
 import { openModal } from './modal';
 
+const popupContainer = document.querySelector('.popup_type_image');
+const popupContainerImage = popupContainer.querySelector('.popup__image');
+const popupContainerCaption = popupContainer.querySelector('.popup__caption');
+
 // @todo: Темплейт карточки
 const cardTemplate = document.querySelector('#card-template');
 
@@ -17,10 +21,9 @@ export const createCard = (
   const cardDeleteBtn = card.querySelector('.card__delete-button');
   const likeBtn = card.querySelector('.card__like-button');
 
-  const titleContent = document.createTextNode(cardData.name);
+  cardTitle.textContent = cardData.name;
   cardImage.setAttribute('src', cardData.link);
   cardImage.setAttribute('alt', `изображение ${cardData.name}`);
-  cardTitle.append(titleContent);
 
   cardDeleteBtn.addEventListener('click', deleteCallback);
   likeBtn.addEventListener('click', likeCardCallback);
@@ -41,11 +44,7 @@ export const likeCard = (evt) => {
 
 export const openImage = (evt) => {
   const image = evt.target;
-  const cardImageCaption = image.parentNode.querySelector('.card__title');
-
-  const popupContainer = document.querySelector('.popup_type_image');
-  const popupContainerImage = popupContainer.querySelector('.popup__image');
-  const popupContainerCaption = popupContainer.querySelector('.popup__caption');
+  const cardImageCaption = image.closest('.card').querySelector('.card__title');
 
   const imageSource = image.getAttribute('src');
   const imageAltText = image.getAttribute('alt');

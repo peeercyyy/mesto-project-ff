@@ -14,9 +14,3 @@ const handleEscClose = (evt) => {
     closeModal(openedPopup);
   }
 };
-
-export const handleOverLayClose = (evt) => {
-  if (evt.target === evt.currentTarget) {
-    closeModal(evt.target);
-  }
-};
