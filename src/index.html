@@ -52,13 +52,20 @@
               name="name"
               class="popup__input popup__input_type_name"
               placeholder="Имя"
+              minlength="2"
+              maxlength="40"
               required />
+            <span class="name-error popup__input-error popup__error"></span>
             <input
               type="text"
               name="description"
               class="popup__input popup__input_type_description"
               placeholder="Занятие"
+              minlength="2"
+              maxlength="200"
               required />
+            <span
+              class="description-error popup__input-error popup__error"></span>
             <button
               type="submit"
               class="button popup__button">

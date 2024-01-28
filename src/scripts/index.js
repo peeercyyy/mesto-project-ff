@@ -1,8 +1,9 @@
 import '../pages/index.css';
-import { loadImages } from './imagesLoader';
 import { createCard, deleteCard, likeCard, openImage } from './card';
 import { initialCards } from './cards';
+import { loadImages } from './imagesLoader';
 import { closeModal, openModal } from './modal';
+import { clearValidation, enableValidation } from './validation';
 
 // @todo: DOM узлы
 const placesList = document.querySelector('.places__list');
@@ -22,7 +23,17 @@ const newPlaceForm = document.forms['new-place'];
 const newPlaceName = newPlaceForm['place-name'];
 const newPlaceLink = newPlaceForm.link;
 
+const validationConfig = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible',
+};
+
 const handleFillProfileFormInputs = () => {
+  clearValidation(profileForm, validationConfig);
   nameInput.value = profileName.textContent;
   jobInput.value = profileDescription.textContent;
 };
@@ -43,6 +54,7 @@ const handleCardFormSubmit = (evt) => {
   placesList.prepend(newCard);
   newPlaceForm.reset();
   closeModal(addNewCardPopup);
+  clearValidation(newPlaceForm, validationConfig);
 };
 
 loadImages();
@@ -59,7 +71,6 @@ popups.forEach((popup) => {
   });
 });
 
-// @todo: Вывести карточки на страницу
 initialCards.forEach((card) => {
   placesList.append(createCard(card, deleteCard, likeCard, openImage));
 });
@@ -76,3 +87,5 @@ addNewCardButton.addEventListener('click', () => {
 profileForm.addEventListener('submit', handleProfileFormSubmit);
 
 newPlaceForm.addEventListener('submit', handleCardFormSubmit);
+
+enableValidation(validationConfig);
