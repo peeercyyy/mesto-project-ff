@@ -1,12 +1,20 @@
 import '../pages/index.css';
-import { createCard, deleteCard, likeCard, openImage } from './card';
-import { initialCards } from './cards';
+import {
+  addCard as addCardRes,
+  editProfile,
+  getCardList,
+  getUserData,
+  updateProfilePic,
+} from './api';
+import { addCard } from './card';
 import { loadImages } from './imagesLoader';
 import { closeModal, openModal } from './modal';
 import { clearValidation, enableValidation } from './validation';
 
+loadImages();
+
 // @todo: DOM узлы
-const placesList = document.querySelector('.places__list');
+export const placesList = document.querySelector('.places__list');
 const editProfileButton = document.querySelector('.profile__edit-button');
 const editPopup = document.querySelector('.popup_type_edit');
 const addNewCardButton = document.querySelector('.profile__add-button');
@@ -18,10 +26,15 @@ const nameInput = profileForm.name;
 const jobInput = profileForm.description;
 const profileName = document.querySelector('.profile__title');
 const profileDescription = document.querySelector('.profile__description');
+const profileImage = document.querySelector('.profile__image');
+const avatarPopup = document.querySelector('.popup_type_avatar');
 
 const newPlaceForm = document.forms['new-place'];
 const newPlaceName = newPlaceForm['place-name'];
 const newPlaceLink = newPlaceForm.link;
+
+const avatarForm = document.forms['new-avatar'];
+const avatarLink = avatarForm.elements['avatar'];
 
 const validationConfig = {
   formSelector: '.popup__form',
@@ -40,24 +53,34 @@ const handleFillProfileFormInputs = () => {
 
 const handleProfileFormSubmit = (evt) => {
   evt.preventDefault();
-  profileName.textContent = nameInput.value;
-  profileDescription.textContent = jobInput.value;
-  profileForm.reset();
-  closeModal(editPopup);
+  const buttonText = evt.submitter.textContent;
+  evt.submitter.textContent += '...';
+
+  editProfile({ name: nameInput.value, about: jobInput.value })
+    .then(() => {
+      profileName.textContent = nameInput.value;
+      profileDescription.textContent = jobInput.value;
+      profileForm.reset();
+      closeModal(editPopup);
+    })
+    .finally(() => (evt.submitter.textContent = buttonText));
 };
 
 const handleCardFormSubmit = (evt) => {
   evt.preventDefault();
+  const buttonText = evt.submitter.textContent;
+  evt.submitter.textContent += '...';
   const name = newPlaceName.value;
   const link = newPlaceLink.value;
-  const newCard = createCard({ name, link }, deleteCard, likeCard, openImage);
-  placesList.prepend(newCard);
-  newPlaceForm.reset();
-  closeModal(addNewCardPopup);
-  clearValidation(newPlaceForm, validationConfig);
+  addCardRes({ name, link })
+    .then((res) => {
+      addCard(res, res.owner._id);
+      newPlaceForm.reset();
+      closeModal(addNewCardPopup);
+      clearValidation(newPlaceForm, validationConfig);
+    })
+    .finally(() => (evt.submitter.textContent = buttonText));
 };
-
-loadImages();
 
 popups.forEach((popup) => {
   popup.classList.add('popup_is-animated');
@@ -71,8 +94,24 @@ popups.forEach((popup) => {
   });
 });
 
-initialCards.forEach((card) => {
-  placesList.append(createCard(card, deleteCard, likeCard, openImage));
+profileImage.addEventListener('click', () => {
+  avatarForm.reset();
+  clearValidation(avatarForm, validationConfig);
+  openModal(avatarPopup);
+});
+
+avatarForm.addEventListener('submit', (evt) => {
+  evt.preventDefault();
+
+  const buttonText = evt.submitter.textContent;
+  evt.submitter.textContent += '...';
+  updateProfilePic(avatarLink.value)
+    .then(() => {
+      profileImage.style.backgroundImage = `url(${avatarLink.value})`;
+      closeModal(avatarPopup);
+    })
+    .catch(console.log)
+    .finally(() => (evt.submitter.textContent = buttonText));
 });
 
 editProfileButton.addEventListener('click', () => {
@@ -89,3 +128,13 @@ profileForm.addEventListener('submit', handleProfileFormSubmit);
 newPlaceForm.addEventListener('submit', handleCardFormSubmit);
 
 enableValidation(validationConfig);
+
+Promise.all([getUserData(), getCardList()]).then(([user, cards]) => {
+  profileName.textContent = user.name;
+  profileDescription.textContent = user.about;
+  profileImage.style.backgroundImage = `url(${user.avatar})`;
+  const userId = user._id;
+
+  placesList.innerHTML = '';
+  cards.reverse().forEach((card) => addCard(card, userId));
+});

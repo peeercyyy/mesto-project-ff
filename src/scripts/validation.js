@@ -59,7 +59,6 @@ const checkValidity = (formElement, inputElement, config) => {
 };
 
 const toggleButtonState = (inputList, buttonElement, config) => {
-  console.log(inputList);
   if (hasInvalidInput(inputList)) {
     buttonElement.disabled = true;
     buttonElement.classList.add(config.inactiveButtonClass);
@@ -81,6 +80,7 @@ const showValidationError = (
   errorMessage,
   config
 ) => {
+  console.log(`.${inputElement.name}-error`);
   const errorElement = formElement.querySelector(`.${inputElement.name}-error`);
   inputElement.classList.add(config.inputErrorClass);
   errorElement.textContent = errorMessage;
@@ -90,8 +90,10 @@ const showValidationError = (
 const hideValidationError = (formElement, inputElement, config) => {
   const errorElement = formElement.querySelector(`.${inputElement.name}-error`);
   inputElement.classList.remove(config.inputErrorClass);
-  errorElement.classList.remove(config.errorClass);
-  errorElement.textContent = '';
+  if (errorElement) {
+    errorElement.classList.remove(config.errorClass);
+    errorElement.textContent = '';
+  }
 };
 
 export const clearValidation = (formElement, config) => {
