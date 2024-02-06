@@ -1,10 +1,10 @@
-import { placesList } from '.';
 import { deleteCard as deleteCardRes, toggleLike } from './api';
 import { openModal } from './modal';
 
-const popupContainer = document.querySelector('.popup_type_image');
-const popupContainerImage = popupContainer.querySelector('.popup__image');
-const popupContainerCaption = popupContainer.querySelector('.popup__caption');
+export const placesList = document.querySelector('.places__list');
+const imagePopup = document.querySelector('.popup_type_image');
+const imagePopupImage = imagePopup.querySelector('.popup__image');
+const imagePopupCaption = imagePopup.querySelector('.popup__caption');
 
 // @todo: Темплейт карточки
 const cardTemplate = document.querySelector('#card-template');
@@ -56,7 +56,9 @@ export const deleteCard = (event, cardId) => {
   const deleteBtn = event.target;
   const deleteBtnCardParent = deleteBtn.closest('.card');
 
-  deleteCardRes(cardId).then(() => deleteBtnCardParent.remove());
+  deleteCardRes(cardId)
+    .then(() => deleteBtnCardParent.remove())
+    .catch(console.log);
 };
 
 export const likeCard = (likeBtn, numberOfLikes, likes) => {
@@ -72,11 +74,11 @@ export const openImage = (evt) => {
   const imageSource = image.getAttribute('src');
   const imageAltText = image.getAttribute('alt');
 
-  popupContainerImage.setAttribute('src', imageSource);
-  popupContainerImage.setAttribute('alt', imageAltText);
-  popupContainerCaption.textContent = cardImageCaption.textContent;
+  imagePopupImage.setAttribute('src', imageSource);
+  imagePopupImage.setAttribute('alt', imageAltText);
+  imagePopupCaption.textContent = cardImageCaption.textContent;
 
-  openModal(popupContainer);
+  openModal(imagePopup);
 };
 
 const refreshLikes = (numberOfLikes, likeBtn) => {
@@ -105,16 +107,12 @@ export const likeWithFetch = (likeBtn, numberOfLikes, cardId) => {
       .then((data) => {
         likeCard(likeBtn, numberOfLikes, data.likes.length);
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch(console.log);
   } else {
     toggleLike(cardId)
       .then((data) => {
         likeCard(likeBtn, numberOfLikes, data.likes.length);
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch(console.log);
   }
 };

@@ -6,7 +6,8 @@ import {
   getUserData,
   updateProfilePic,
 } from './api';
-import { addCard } from './card';
+import { addCard, placesList } from './card';
+import { validationConfig } from './constants';
 import { loadImages } from './imagesLoader';
 import { closeModal, openModal } from './modal';
 import { clearValidation, enableValidation } from './validation';
@@ -14,7 +15,6 @@ import { clearValidation, enableValidation } from './validation';
 loadImages();
 
 // @todo: DOM узлы
-export const placesList = document.querySelector('.places__list');
 const editProfileButton = document.querySelector('.profile__edit-button');
 const editPopup = document.querySelector('.popup_type_edit');
 const addNewCardButton = document.querySelector('.profile__add-button');
@@ -36,15 +36,6 @@ const newPlaceLink = newPlaceForm.link;
 const avatarForm = document.forms['new-avatar'];
 const avatarLink = avatarForm.elements['avatar'];
 
-const validationConfig = {
-  formSelector: '.popup__form',
-  inputSelector: '.popup__input',
-  submitButtonSelector: '.popup__button',
-  inactiveButtonClass: 'popup__button_disabled',
-  inputErrorClass: 'popup__input_type_error',
-  errorClass: 'popup__error_visible',
-};
-
 const handleFillProfileFormInputs = () => {
   clearValidation(profileForm, validationConfig);
   nameInput.value = profileName.textContent;
@@ -63,6 +54,7 @@ const handleProfileFormSubmit = (evt) => {
       profileForm.reset();
       closeModal(editPopup);
     })
+    .catch(console.log)
     .finally(() => (evt.submitter.textContent = buttonText));
 };
 
@@ -79,6 +71,7 @@ const handleCardFormSubmit = (evt) => {
       closeModal(addNewCardPopup);
       clearValidation(newPlaceForm, validationConfig);
     })
+    .catch(console.log)
     .finally(() => (evt.submitter.textContent = buttonText));
 };
 
@@ -129,12 +122,14 @@ newPlaceForm.addEventListener('submit', handleCardFormSubmit);
 
 enableValidation(validationConfig);
 
-Promise.all([getUserData(), getCardList()]).then(([user, cards]) => {
-  profileName.textContent = user.name;
-  profileDescription.textContent = user.about;
-  profileImage.style.backgroundImage = `url(${user.avatar})`;
-  const userId = user._id;
+Promise.all([getUserData(), getCardList()])
+  .then(([user, cards]) => {
+    profileName.textContent = user.name;
+    profileDescription.textContent = user.about;
+    profileImage.style.backgroundImage = `url(${user.avatar})`;
+    const userId = user._id;
 
-  placesList.innerHTML = '';
-  cards.reverse().forEach((card) => addCard(card, userId));
-});
+    placesList.innerHTML = '';
+    cards.reverse().forEach((card) => addCard(card, userId));
+  })
+  .catch(console.log);

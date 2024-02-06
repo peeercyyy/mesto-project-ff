@@ -15,9 +15,7 @@ const handleFetch = (url, { method, data } = { method: 'GET', data: null }) => {
     method,
     headers,
     body: data ? JSON.stringify(data) : undefined,
-  })
-    .then(getResData)
-    .catch(console.log);
+  }).then(getResData);
 };
 
 const getResData = (res) =>
