@@ -60,8 +60,7 @@ const checkValidity = (formElement, inputElement, config) => {
 
 const toggleButtonState = (inputList, buttonElement, config) => {
   if (hasInvalidInput(inputList)) {
-    buttonElement.disabled = true;
-    buttonElement.classList.add(config.inactiveButtonClass);
+    disableButton(buttonElement);
   } else {
     buttonElement.disabled = false;
     buttonElement.classList.remove(config.inactiveButtonClass);
@@ -101,9 +100,13 @@ export const clearValidation = (formElement, config) => {
   const inputList = formElement.querySelectorAll(config.inputSelector);
   const buttonElement = formElement.querySelector(config.submitButtonSelector);
 
-  buttonElement.classList.add(config.inactiveButtonClass);
-
+  disableButton(buttonElement);
   inputList.forEach((input) => {
     hideValidationError(formElement, input, config);
   });
+};
+
+const disableButton = (buttonElement) => {
+  buttonElement.disabled = true;
+  buttonElement.classList.add(config.inactiveButtonClass);
 };
